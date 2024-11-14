@@ -12,7 +12,7 @@ struct RectangleButton: View {
     var color: Color = Color(hex: "#3D5E7E")
     var width: CGFloat = 70
     var height: CGFloat = 70
-    var action: () -> Void // Action to perform on tap
+    var action: () -> Void = { }// Action to perform on tap
 
     var body: some View {
         Button(action: action) {
