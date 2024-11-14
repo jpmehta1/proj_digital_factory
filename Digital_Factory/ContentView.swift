@@ -1,30 +1,33 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var input: String = ""
-    @State private var result: String = "0"
-    @State private var currentOperator: String? = nil
-    @State private var previousValue: Double? = nil
-    @State private var isEnteringNewNumber: Bool = true
-
+    // MARK: - State Variables
+    @State private var input: String = ""             // Keeps track of the displayed input
+    @State private var result: String = "0"           // Holds the current result or display number
+    @State private var currentOperator: String? = nil // Holds the last operator tapped (+, -, etc.)
+    @State private var previousValue: Double? = nil   // Stores the last value before the current operation
+    @State private var isEnteringNewNumber: Bool = true // Determines if a new number is being entered
+    
     var body: some View {
         GeometryReader { geometry in
-            let buttonWidth = geometry.size.width * 0.18 // Adjusted button width for landscape
-            let buttonHeight = geometry.size.height * 0.12 // Adjusted button height for landscape
+            // Button dimensions based on screen size
+            let buttonWidth = geometry.size.width * 0.18
+            let buttonHeight = geometry.size.height * 0.12
             
             ZStack {
+                // Background color
                 Color(.black)
                     .edgesIgnoringSafeArea(.all)
                 
                 VStack(spacing: geometry.size.height * 0.02) { // Spacing between rows
                     // Display area for input and result
                     VStack(alignment: .trailing, spacing: 8) {
-                        Text(input)
+                        Text(input) // Shows the sequence of inputs and operations
                             .font(.title2)
                             .foregroundColor(.gray)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                         
-                        Text(result)
+                        Text(result) // Shows the current result
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
@@ -37,9 +40,9 @@ struct ContentView: View {
                     // Row for AC button, aligned to the left
                     HStack {
                         RectangleButton(label: "AC", color: Color(hex: "#C59C55"), width: buttonWidth, height: buttonHeight) {
-                            clear()
+                            clear() // Clears the input and result
                         }
-                        .padding(.trailing, geometry.size.width * 0.65)// Pushes the AC button to the left
+                        .padding(.trailing, geometry.size.width * 0.65) // Pushes the AC button to the left
                     }
                     .padding(.bottom, geometry.size.height * 0.01)
                     
@@ -73,7 +76,7 @@ struct ContentView: View {
                             RectangleButton(label: "0", width: buttonWidth, height: buttonHeight) { addDigit("0") }
                             RectangleButton(label: ".", width: buttonWidth, height: buttonHeight) { addDigit(".") }
                             RectangleButton(label: "=", color: Color(hex: "#C59C55"), width: buttonWidth * 2 + geometry.size.width * 0.04, height: buttonHeight) {
-                                calculateResult()
+                                calculateResult() // Calculate final result when "=" is pressed
                             }
                         }
                     }
@@ -85,6 +88,7 @@ struct ContentView: View {
 
     // MARK: - Button Action Methods
     
+    // Adds a digit or decimal point to the current input
     private func addDigit(_ digit: String) {
         if isEnteringNewNumber {
             result = digit
@@ -95,17 +99,20 @@ struct ContentView: View {
         input += digit
     }
 
+    // Applies an arithmetic operator (+, -, ×, ÷)
     private func applyOperator(_ op: String) {
         if let previousValue = previousValue, let currentValue = Double(result), let currentOperator = currentOperator {
+            // Perform the calculation with the previous and current values
             result = calculate(previousValue, with: currentValue, using: currentOperator)
         }
         
-        previousValue = Double(result)
-        currentOperator = op
+        previousValue = Double(result) // Save the current result as the previous value
+        currentOperator = op           // Set the operator for the next calculation
         input += " \(op) "
         isEnteringNewNumber = true
     }
 
+    // Resets all inputs and results
     private func clear() {
         input = ""
         result = "0"
@@ -114,6 +121,7 @@ struct ContentView: View {
         isEnteringNewNumber = true
     }
 
+    // Calculates the result of the current operation
     private func calculateResult() {
         if let previousValue = previousValue, let currentValue = Double(result), let currentOperator = currentOperator {
             result = calculate(previousValue, with: currentValue, using: currentOperator)
@@ -124,6 +132,7 @@ struct ContentView: View {
         isEnteringNewNumber = true
     }
 
+    // Calculates trigonometric functions (sin, cos, tan)
     private func calculateTrigonometricFunction(_ function: String) {
         if let value = Double(result) {
             switch function {
@@ -141,7 +150,7 @@ struct ContentView: View {
         }
     }
 
-    // Helper function to perform calculations
+    // Helper function to perform basic arithmetic calculations
     private func calculate(_ firstValue: Double, with secondValue: Double, using operatorSymbol: String) -> String {
         switch operatorSymbol {
         case "+":
@@ -161,3 +170,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+
